@@ -412,6 +412,22 @@ jobs:
         "${CCACHE_BIN}" --zero-stats || true
         "${CCACHE_BIN}" --show-stats || true
 
+    - name: Force Fix base.c Header
+      shell: bash
+      run: |
+        # Go to the kernel source directory
+        cd kernel/common
+        
+        # 1. Clean up any previous failed attempts to add the header
+        sed -i '/#include <linux\/dma-buf.h>/d' fs/proc/base.c
+        
+        # 2. Forcefully insert the header at the top of the include list
+        # This ensures it is defined before any SUSFS code tries to use it.
+        sed -i '1i #include <linux/dma-buf.h>' fs/proc/base.c
+        
+        # 3. Verify the header is actually there
+        grep "dma-buf.h" fs/proc/base.c
+
     - name: Build Kernel
       env:
         SOURCE_DATE_EPOCH: ${{ env.SOURCE_DATE_EPOCH }}
