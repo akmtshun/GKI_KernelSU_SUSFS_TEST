@@ -200,11 +200,11 @@ jobs:
         echo "✅ ccache binary verified: $(/usr/bin/ccache --version | head -1)"
         
         # Setup cache directories
-        #export CCACHE_DIR="/home/runner/.ccache"
-        #echo "CCACHE_DIR=$CCACHE_DIR" >> $GITHUB_ENV
-        #export LDCACHE_DIR="/home/runner/.ld_cache"
-        #echo "LDCACHE_DIR=$LDCACHE_DIR" >> $GITHUB_ENV
-        #mkdir -p "$CCACHE_DIR" "$LDCACHE_DIR"
+        export CCACHE_DIR="/home/runner/.ccache"
+        echo "CCACHE_DIR=$CCACHE_DIR" >> $GITHUB_ENV
+        export LDCACHE_DIR="/home/runner/.ld_cache"
+        echo "LDCACHE_DIR=$LDCACHE_DIR" >> $GITHUB_ENV
+        mkdir -p "$CCACHE_DIR" "$LDCACHE_DIR"
         
         # Create LD wrapper for thin-LTO caching
         #cat > "$GITHUB_WORKSPACE/kernel/common/ld-wrapper" << 'EOF'
