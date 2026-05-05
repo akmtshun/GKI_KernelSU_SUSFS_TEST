@@ -132,18 +132,16 @@ runs:
           perl -i -pe 's/ignored_mask:%x/ignored_mask:0/g' fs/notify/fdinfo.c
         fi
 
-    - name: Apply Android 14 6.1 Fake Patches
+    - name: Revert Android 14 6.1 Fake Patches
       shell: bash
       if: inputs.kernel_version == '6.1' && inputs.android_version == 'android14'
       working-directory: ${{ github.workspace }}/kernel/common
       run: |
-        if [ "${{ inputs.sublevel }}" -ge "141" ]; then
-          echo "Applying base.c Android 14 6.1 Fake Patch"
-          sed -i '/^#include <linux\/cpufreq_times.h>$/a #include <linux/dma-buf.h>' fs/proc/base.c
-        fi
-        if [ "${{ inputs.sublevel }}" -ge "157" ]; then
-          echo "Applying namespace.c Android 14 6.1 Fake Patch"
-          sed -i '/^#include <trace\/hooks\/blk.h>$/d' fs/namespace.c
+        # Change -ge "141" to a higher number or remove this block 
+        # if you are on 6.1.145, as you NEED this header.
+        if [ "${{ inputs.sublevel }}" -ge "157" ]; then 
+          echo "Reverting base.c Android 14 6.1 Fake Patch"
+          sed -i '/^#include <linux\/dma-buf.h>$/d' fs/proc/base.c
         fi
 
     - name: Apply Android 15 6.6 Fake Patches
