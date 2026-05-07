@@ -166,7 +166,7 @@ runs:
           /int ret.*= 0, copied.*= 0;/!d
           a\
                 unsigned int nr_subpages = __PAGE_SIZE / PAGE_SIZE;\
-                pagemap_entry_t *res = NULL;
+          			pagemap_entry_t *res = NULL;
           }' fs/proc/task_mmu.c
         fi
         cat fs/proc/task_mmu.c
