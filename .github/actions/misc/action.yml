@@ -27,3 +27,18 @@ runs:
         EOF
         # CONFIG_TRIM_UNUSED_KSYMS is not set
         # add this here for later
+
+
+    - name: Add RUST build configs
+      shell: bash
+      if: ${{ inputs.kernel_version == '6.12' }}
+      run: |
+        set -euo pipefail
+        echo "Add Build based configs"
+        cat >> "${{ github.workspace }}/wild_gki.fragment" << 'EOF'
+        CONFIG_ANDROID_BINDER_IPC_RUST=y
+        CONFIG_CMDLINE="module_blacklist=rust_binder"
+        CONFIG_CMDLINE_EXTEND=y
+        CONFIG_CMDLINE_FORCE=n
+        CONFIG_RUST=y
+        EOF
