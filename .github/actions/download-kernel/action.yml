@@ -67,7 +67,7 @@ runs:
           fi
           if [ $attempt -lt $MAX_RETRIES ]; then
             echo "Cleaning workspace and retrying after ${RETRY_DELAY_SHORT}s..."
-            rm -rf .repo
+            rm -rf .repo || true
             sleep $RETRY_DELAY_SHORT
             init_repo
           else
