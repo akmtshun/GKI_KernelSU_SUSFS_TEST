@@ -29,13 +29,13 @@ runs:
       shell: bash
       working-directory: ${{ github.workspace }}/kernel
       run: |
-        set -e
+        set -euo pipefail
 
         FORMATTED_BRANCH="${{ inputs.android_version }}-${{ inputs.kernel_version }}-${{ inputs.os_patch_level }}"
 
         init_repo() {
-          repo init -u https://android.googlesource.com/kernel/manifest -b common-${FORMATTED_BRANCH} --depth=1
-          REMOTE_BRANCH=$(git ls-remote https://android.googlesource.com/kernel/common ${FORMATTED_BRANCH})
+          repo init -u https://android.googlesource.com/kernel/manifest -b common-${FORMATTED_BRANCH} --depth=1 || { echo "ERROR: repo init failed" >&2; return 1; }
+          REMOTE_BRANCH=$(git ls-remote https://android.googlesource.com/kernel/common ${FORMATTED_BRANCH}) || { echo "ERROR: git ls-remote failed" >&2; return 1; }
           DEFAULT_MANIFEST_PATH=.repo/manifests/default.xml
           DEPRECATED=false
           if grep -q deprecated <<< "$REMOTE_BRANCH"; then
@@ -46,7 +46,7 @@ runs:
           echo "deprecated=$DEPRECATED" >> $GITHUB_OUTPUT
         }
 
-        init_repo
+        init_repo || { echo "ERROR: init_repo failed" >&2; exit 1; }
 
         MAX_RETRIES=3
         RETRY_DELAY_SHORT=15
@@ -83,7 +83,7 @@ runs:
       if: ${{ inputs.use_repo != 'true' }}
       working-directory: ${{ github.workspace }}/kernel
       run: |
-        set -e
+        set -euo pipefail
         FORMATTED_BRANCH="${{ inputs.android_version }}-${{ inputs.kernel_version }}-${{ inputs.os_patch_level }}"
         MAIN_MANIFEST_URL="https://android.googlesource.com/kernel/manifest/+/refs/heads/common-${FORMATTED_BRANCH}/default.xml?format=TEXT"
         DEPRECATED_MANIFEST_URL="https://android.googlesource.com/kernel/manifest/+/refs/heads/deprecated/common-${FORMATTED_BRANCH}/default.xml?format=TEXT"
